@@ -45,13 +45,6 @@ function demographic(namesId) {
     let demoInfo = d3.select(".panel-body");
       // clear any existing metadata
     demoInfo.html("")
-    // demoInfo.append("ul").text(`id: ${selected.id}`);
-    // demoInfo.append("ul").text(`ethnicity: ${selected.ethnicity}`);
-    // demoInfo.append("ul").text(`gender: ${selected.gender}`);
-    // demoInfo.append("ul").text(`age: ${selected.age}`);
-    // demoInfo.append("ul").text(`location: ${selected.location}`);
-    // demoInfo.append("ul").text(`bbtype: ${selected.bbtype}`);
-    // demoInfo.append("ul").text(`wfreq: ${selected.wfreq}`);
 
       // iterate through each key & vale pair returned from the `Object.entries` method 
     Object.entries(selected[0]).forEach(([key, value]) => {
@@ -80,17 +73,6 @@ function graph(namesId) {
     let barOtuIds = filtereddata.otu_ids.slice(0, 10).map(otu_id => "OTU " + otu_id).reverse()
     let otuIds = filtereddata.otu_ids.slice(0, 10).reverse()
     let otuLabels = filtereddata.otu_labels.slice(0, 10).reverse()
-
-    // For loop to populate arrays
-    // for (let i = 0; i < samples.length; i++) {
-    //   row = samples[i];
-
-    // let sample_values = row.sample_values.slice(0, 10).reverse()
-    //   let otu_ids = row.otu_ids.slice(0, 10).reverse()
-    //   let otu_labels = row.otu_labels.slice(0, 10).reverse()
-
-    //   console.log(otu_ids);
-    //   console.log(sample_values);
 
       // Trace1 for the bar chart
     let trace1 = {
