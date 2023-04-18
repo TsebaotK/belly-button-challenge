@@ -1,111 +1,132 @@
 var url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
 
-
 // Initialization function
-function initialization() {
+function testSubject() {
   // Fetch the names JSON data 
   d3.json(url).then((data) => {
-    names = data.names;
-
+    // assign the names array to sampleNames variable
+    sampleNames = data.names;
+    // select the selDataset id and assign it to name variable
     let name = d3.select("#selDataset");
-    for (let i = 0; i < names.length; i++) {
-      name.append("option").attr("value", "names").text(names[i]);
-      // console.log(names)
-    }    
+    // for loop inside the names data (sampleNames)
+    for (let i = 0; i < sampleNames.length; i++) {
+      // append the sampleNames data to the option list
+      name.append("option").attr("value", sampleNames[i]).text(sampleNames[i]);
+      // console.log(names)     
+    }
+      // initialize the demographic and graph function with the index zero value of sampleNames
+    demographic(sampleNames[0]),
+      graph(sampleNames[0]);
   })
 };
 
-initialization()
+testSubject()
 
-
-// Fetch the metadata JSON object 
-d3.json(url).then((data) => {
-  metadata = data.metadata
-
-  let demoInfo = d3.select(".panel-body");
-  // For loop to populate metadata arrays
-  for (let i = 0; i < metadata.length; i++) {
-    row = metadata[i];
-    if (row.id == initialization[i]) {
-      console.log("id", [i], ":", row.id[i])
-      console.log("Ethnicity", [i], ":", row.ethnicity[i])
-      console.log("gender", [i], ":", row.gender[i])
-      console.log("age", [i], ":", row.age[i])
-      console.log("location", [i], ":", row.location[i])
-      console.log("bbtyoe", [i], ":", row.bbtype[i])
-      console.log("wfreq", [i], ":", row.wfreq[i])
-      demoInfo.append("ul").text(row.id);
-      demoInfo.append("ul").text(row.ethnicity);
-      demoInfo.append("ul").text(row.gender);
-      demoInfo.append("ul").text(row.age);
-      demoInfo.append("ul").text(row.location);
-      demoInfo.append("ul").text(row.bbtype);
-      demoInfo.append("ul").text(row.wfreq);
-    }
-  }
+  // load the demographic and graph function when the optionchanged function is called 
+function optionChanged(id) {
+  demographic(id)
+  graph(id);
 }
-  // }
-);
+
+// demographic function
+function demographic(namesId) {
+    // Fetch the metadata JSON object 
+  d3.json(url).then((data) => {
+      // assign the metadata object to metadata variable
+    metadata = data.metadata
+
+      // filter the metadata to create a new "selected" array that has id equal to namesId 
+    let selected = metadata.filter(selectedId =>
+      selectedId.id == namesId
+    );
+    console.log(selected)
+      // select the panel-body class and assign it to demoInfo variable
+    let demoInfo = d3.select(".panel-body");
+      // clear any existing metadata
+    demoInfo.html("")
+    // demoInfo.append("ul").text(`id: ${selected.id}`);
+    // demoInfo.append("ul").text(`ethnicity: ${selected.ethnicity}`);
+    // demoInfo.append("ul").text(`gender: ${selected.gender}`);
+    // demoInfo.append("ul").text(`age: ${selected.age}`);
+    // demoInfo.append("ul").text(`location: ${selected.location}`);
+    // demoInfo.append("ul").text(`bbtype: ${selected.bbtype}`);
+    // demoInfo.append("ul").text(`wfreq: ${selected.wfreq}`);
+
+      // iterate through each key & vale pair returned from the `Object.entries` method 
+    Object.entries(selected[0]).forEach(([key, value]) => {
+      // append the key and value elements to the demoInfo 
+      demoInfo.append("ul").text(`${key}: ${value}`);
+    });
+  }
+  );
+}
 
 
+function graph(namesId) {
+  // Fetch the samples JSON object 
+  d3.json(url).then((data) => {
+      // assign the samples object to samples variable
+    samples = data.samples
+      // filter the samples object to create a new "filtered" array that has id equal to namesId
+    let filtered = samples.filter(sampleId =>
+      sampleId.id == namesId
+    );
+      // assign the index [0] elements of the "filtered" object to the filtereddata variable 
+    let filtereddata = filtered[0]
+    console.log(filtereddata)
+      // slice the first 10 elements of thesample_values, otu_ids & otu_labels arrays and assign them to their respective variable 
+    let sampleValues = filtereddata.sample_values.slice(0, 10).reverse()
+    let barOtuIds = filtereddata.otu_ids.slice(0, 10).map(otu_id => "OTU " + otu_id).reverse()
+    let otuIds = filtereddata.otu_ids.slice(0, 10).reverse()
+    let otuLabels = filtereddata.otu_labels.slice(0, 10).reverse()
 
+    // For loop to populate arrays
+    // for (let i = 0; i < samples.length; i++) {
+    //   row = samples[i];
 
-// Fetch the samples JSON object 
-d3.json(url).then((data) => {
+    // let sample_values = row.sample_values.slice(0, 10).reverse()
+    //   let otu_ids = row.otu_ids.slice(0, 10).reverse()
+    //   let otu_labels = row.otu_labels.slice(0, 10).reverse()
 
-  // Initialized arrays
-  samples = data.samples
+    //   console.log(otu_ids);
+    //   console.log(sample_values);
 
-  let sample = d3.select("#bar");
-  // For loop to populate arrays
-  for (let i = 0; i < samples.length; i++) {
-    row = samples[i];
-    if (row.id == initialization()) {
-      console.log(row.id);
-      console.log(row.otu_ids);
-      console.log(row.sample_values);
-      console.log(row.otu_labels);
-      // sample.append("ul").text(row.id);
-      // sample.append("ul").text(row.id);
-      let trace1 = {
-        x: row.sample_values[0],
-        y: row.otu_ids[0],
-        text: row.otu_labels[0],
-        type: 'bar',
-        orientation: "h"
-      };
+      // Trace1 for the bar chart
+    let trace1 = {
+      x: sampleValues,
+      y: barOtuIds,
+      text: otuLabels,
+      type: 'bar',
+      orientation: "h"
+    };
 
-      let trace2 = {
-        x: row.otu_ids[0],
-        y: row.sample_values[0],
-        text: row.otu_labels[0],
-        mode: 'markers',
-        marker: {
-          size: row.sample_values[0],
-          color: row.otu_ids[0]
-        }
-      };
+      // Trace2 for the bubble chart
+    let trace2 = {
+      x: otuIds,
+      y: sampleValues,
+      text: otuLabels,
+      mode: 'markers',
+      marker: {
+        size: sampleValues,
+        color: otuIds
+      }
+    };
 
       // Data trace array
-      let barChart = [trace1];
-      let bubbleChart = [trace2];
-      // var guageChart = [trace3];
+    let barChart = [trace1];
+    let bubbleChart = [trace2];
+    
+    // Render the bar chart to the div tag with the "bar" id 
+    Plotly.newPlot("bar", barChart);
 
-      // Render the plot to the div tag with id "bar"
-      Plotly.newPlot("bar", barChart, layout);
+   
+    // Render the bubble chart to the div tag with the "bubble" id 
+    Plotly.newPlot("bubble", bubbleChart);
 
-      // // Render the plot to the div tag with id "gauge"
-      // // Plotly.newPlot("gauge", guageChart);
-
-
-      // Render the plot to the div tag with id "bubble"
-      Plotly.newPlot("bubble", bubbleChart, layout);
-      // }
-    }
-  }
-});
-
+       
+  });
+}
 
 
 
