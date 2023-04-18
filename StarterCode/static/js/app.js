@@ -84,8 +84,7 @@ function graph(graphId) {
     let otuIds = filtereddata.otu_ids.slice(0, 10).reverse()
     let otuLabels = filtereddata.otu_labels.slice(0, 10).reverse()
 
-
-    // Trace1 for the bar chart
+      // Trace1 for the bar chart
     let trace1 = {
       x: sampleValues,
       y: barOtuIds,
