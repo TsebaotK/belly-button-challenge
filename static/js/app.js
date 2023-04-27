@@ -107,8 +107,8 @@ function graph(graphId) {
 
     // Apply a title to the axes
     let layout1 = {
-      title: {text: "The top 10 OTUs found"      },
-      xaxis: { title: "Sample Values" },
+      title: {text: "The top 10 OTUs found"},
+      xaxis: { title: "Sample Values"},
       size: 18,
       bottommargin: 0
     }
